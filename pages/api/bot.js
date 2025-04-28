@@ -53,20 +53,24 @@ export default async function handler(req, res) {
       try {
         console.log("Received message:", text);
 
+        // Chuyển đổi tìm kiếm thành không phân biệt hoa thường
+        const searchQuery = text.toLowerCase();
+
         // Gửi yêu cầu tìm kiếm tới Google Sheets API
-        const results = await searchGoogleSheet(text);
+        const results = await searchGoogleSheet(searchQuery);
         console.log("Search results:", results);
 
         // Kiểm tra xem results có phải là mảng hay không trước khi sử dụng .map()
         if (Array.isArray(results) && results.length > 0) {
-          const responseText = results.map(row => 
-            `Giá WiFi tại ${row.country} là:\n` +
-            `- 500MB/ngày: ${row.mb}\n` +
-            `- 1Gb/ngày: ${row.gb1}\n` +
-            `- 3Gb/ngày: ${row.gb3}\n` +
-            `- 5Gb/ngày: ${row.gb5}\n` +
-            `Chiết khấu tối đa: ${row.discount}`
-          ).join("\n\n");
+          const responseText = results.map(row => {
+            const discountPercentage = (row.discount * 100).toFixed(0);  // Chuyển đổi chiết khấu sang phần trăm
+            return `Giá WiFi tại ${row.country} là:\n` +
+                   `- 500MB/ngày: ${row.mb}\n` +
+                   `- 1Gb/ngày: ${row.gb1}\n` +
+                   `- 3Gb/ngày: ${row.gb3}\n` +
+                   `- 5Gb/ngày: ${row.gb5}\n` +
+                   `Chiết khấu tối đa: ${discountPercentage}%`;  // Định dạng chiết khấu dưới dạng %
+          }).join("\n\n");
           
           await sendMessage(chatId, responseText);
         } else {
