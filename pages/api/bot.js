@@ -7,20 +7,30 @@ const GOOGLE_SHEET_API_URL = process.env.GOOGLE_SHEET_API_URL;
 // Function gửi tin nhắn đến Telegram
 async function sendMessage(chatId, text) {
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-  await axios.post(url, {
-    chat_id: chatId,
-    text: text,
-  });
+  try {
+    await axios.post(url, {
+      chat_id: chatId,
+      text: text,
+    });
+  } catch (error) {
+    console.error("Error sending message to Telegram:", error);
+  }
 }
 
 // Hàm tìm kiếm trong Google Sheets
 async function searchGoogleSheet(query) {
-  const res = await axios.get(GOOGLE_SHEET_API_URL, {
-    params: {
-      q: query,
-    },
-  });
-  return res.data;
+  try {
+    const res = await axios.get(GOOGLE_SHEET_API_URL, {
+      params: {
+        q: query,
+      },
+    });
+    console.log("Google Sheets API response:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching data from Google Sheets:", error);
+    throw new Error("Lỗi khi gọi API Google Sheets");
+  }
 }
 
 // API handler
@@ -35,10 +45,13 @@ export default async function handler(req, res) {
 
     if (text) {
       try {
+        console.log("Received message:", text);
+
         // Gửi yêu cầu tìm kiếm tới Google Sheets API
         const results = await searchGoogleSheet(text);
+        console.log("Search results:", results);
 
-        if (results.length > 0) {
+        if (results && results.length > 0) {
           // Trả về kết quả tìm kiếm
           const responseText = results.map(row => 
             `Giá WiFi tại ${row.country} là:\n` +
@@ -54,7 +67,7 @@ export default async function handler(req, res) {
           await sendMessage(chatId, "Không tìm thấy kết quả.");
         }
       } catch (error) {
-        console.error("Error fetching from Google Sheets:", error);
+        console.error("Error handling the request:", error);
         await sendMessage(chatId, "Đã có lỗi xảy ra. Vui lòng thử lại.");
       }
     }
