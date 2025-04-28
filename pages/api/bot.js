@@ -69,7 +69,7 @@ export default async function handler(req, res) {
                    `- 1Gb/ngày: ${row.gb1}\n` +
                    `- 3Gb/ngày: ${row.gb3}\n` +
                    `- 5Gb/ngày: ${row.gb5}\n` +
-                   `Chiết khấu tối đa: ${discountPercentage * 100}` + '%';  // Định dạng chiết khấu dưới dạng %
+                   `Chiết khấu tối đa: ${discountPercentage}` + '%';  // Định dạng chiết khấu dưới dạng %
           }).join("\n\n");
           
           await sendMessage(chatId, responseText);
