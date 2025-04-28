@@ -65,10 +65,10 @@ export default async function handler(req, res) {
           const responseText = results.map(row => {
             const discountPercentage = (row.discount * 100).toFixed(0);  // Chuyển đổi chiết khấu sang phần trăm
             return `Giá WiFi tại ${row.country} là:\n` +
-                   `- 500MB/ngày: ${row.mb}\n` +
-                   `- 1Gb/ngày: ${row.gb1}\n` +
-                   `- 3Gb/ngày: ${row.gb3}\n` +
-                   `- 5Gb/ngày: ${row.gb5}\n` +
+                   `- 500MB/ngày: ${formatCurrency(row.mb)} VND\n` +
+                   `- 1Gb/ngày: ${formatCurrency(row.gb1)} VND\n` +
+                   `- 3Gb/ngày: ${formatCurrency(row.gb3)} VND\n` +
+                   `- 5Gb/ngày: ${formatCurrency(row.gb5)} VND\n` +
                    `Chiết khấu tối đa: ${discountPercentage}` + '%';  // Định dạng chiết khấu dưới dạng %
           }).join("\n\n");
           
