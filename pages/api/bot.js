@@ -26,6 +26,12 @@ async function searchGoogleSheet(query) {
       },
     });
     console.log("Google Sheets API response:", res.data);
+
+    // Kiểm tra nếu dữ liệu không phải là mảng
+    if (!Array.isArray(res.data)) {
+      throw new Error("Dữ liệu trả về từ Google Sheets không phải là mảng.");
+    }
+
     return res.data;
   } catch (error) {
     console.error("Error fetching data from Google Sheets:", error);
@@ -51,8 +57,8 @@ export default async function handler(req, res) {
         const results = await searchGoogleSheet(text);
         console.log("Search results:", results);
 
-        if (results && results.length > 0) {
-          // Trả về kết quả tìm kiếm
+        // Kiểm tra xem results có phải là mảng hay không trước khi sử dụng .map()
+        if (Array.isArray(results) && results.length > 0) {
           const responseText = results.map(row => 
             `Giá WiFi tại ${row.country} là:\n` +
             `- 500MB/ngày: ${row.mb}\n` +
