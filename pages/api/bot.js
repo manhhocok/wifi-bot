@@ -68,7 +68,7 @@ export default async function handler(req, res) {
         }
       } catch (error) {
         console.error("Error handling the request:", error);
-        await sendMessage(chatId, "Đã có lỗi xảy ra. Vui lòng thử lại.");
+        // await sendMessage(chatId, "Đã có lỗi xảy ra. Vui lòng thử lại.");
       }
     }
 
